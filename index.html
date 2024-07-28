@@ -27,48 +27,50 @@
 
         .container {
             text-align: center;
-            background-color: #fff; /* White background */
+            background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 900px;
-            height: 80vh;
+            width: 95%;
+            max-width: 600px;
+            height: auto; /* Adjust height based on content */
             overflow-y: auto;
         }
 
         header {
             margin-bottom: 20px;
+        }
+
+        h1 {
             font-size: 2.5em;
             font-weight: bold;
-            color: #fff; /* Default text color */
-            background: linear-gradient(45deg, #ff007f, #ff7700, #00cfff, #32a852); /* Funky gradient */
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #dadce0;
-            font-family: 'Comic Sans MS', 'Comic Sans', cursive; /* Funky font */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        h1 {
-            font-size: 3em;
-            font-weight: bold;
-            color: #fff; /* Default text color */
-            background: linear-gradient(45deg, #ff007f, #ff7700, #00cfff, #32a852); /* Funky gradient */
+            color: #fff;
+            background: linear-gradient(45deg, #ff007f, #ff7700, #00cfff, #32a852);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             padding: 10px;
             border-radius: 12px;
-            font-family: 'Comic Sans MS', 'Comic Sans', cursive; /* Funky font */
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4); /* Funky shadow */
-            animation: pulse 2s infinite; /* Pulsing animation */
+            font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+            }
+            50% {
+                text-shadow: 6px 6px 12px rgba(0, 0, 0, 0.2);
+            }
+            100% {
+                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+            }
         }
 
         input[type="text"] {
-            width: 50%;
-            padding: 16px;
+            width: calc(100% - 22px); /* Adjust width for padding and margin */
+            padding: 14px;
             border: 1px solid #dadce0;
             border-radius: 24px;
             font-size: 16px;
@@ -80,7 +82,7 @@
             padding: 12px 24px;
             border: none;
             background-color: #f8f9fa;
-            color: #1a73e8; /* Blue text */
+            color: #1a73e8;
             border-radius: 24px;
             cursor: pointer;
             font-size: 16px;
@@ -89,8 +91,8 @@
         }
 
         button:hover {
-            background-color: #e8f0fe; /* Light blue */
-            color: #174ea6; /* Darker blue */
+            background-color: #e8f0fe;
+            color: #174ea6;
         }
 
         .results {
@@ -122,7 +124,7 @@
         }
 
         .error {
-            color: #d93025; /* Red */
+            color: #d93025;
         }
 
         .load-more {
@@ -141,6 +143,36 @@
         .load-more:hover {
             background-color: #e8f0fe;
             color: #174ea6;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            input[type="text"] {
+                width: calc(100% - 16px); /* Adjust for smaller screens */
+            }
+
+            button, .load-more {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            input[type="text"] {
+                width: calc(100% - 12px); /* Further adjustment */
+            }
+
+            button, .load-more {
+                font-size: 12px;
+                padding: 8px 16px;
+            }
         }
     </style>
 </head>
