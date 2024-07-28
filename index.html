@@ -94,7 +94,7 @@
             
             if (query) {
                 try {
-                    const response = await fetch(`http://localhost:3000/search?q=${encodeURIComponent(query)}`);
+                    const response = await fetch(`http://192.168.1.229:3000/search?q=${encodeURIComponent(query)}`);
                     if (!response.ok) {
                         throw new Error('Failed to fetch results');
                     }
