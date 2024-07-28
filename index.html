@@ -96,6 +96,7 @@
                 try {
                     // Use ngrok URL
                     const response = await fetch(`https://3de2-2600-1700-b3a0-f20-bc48-756c-49db-e096.ngrok-free.app/search?q=${encodeURIComponent(query)}`);
+
                     if (!response.ok) {
                         throw new Error('Failed to fetch results');
                     }
