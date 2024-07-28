@@ -77,40 +77,59 @@
     </style>
 </head>
 <body>
-    <div class="container">
+   <div class="container">
         <h1>Simple Search Engine</h1>
         <form id="searchForm" onsubmit="performSearch(event)">
             <input type="text" id="query" placeholder="Enter your search" required>
             <button type="submit">Search</button>
         </form>
         <div id="results" class="results"></div>
+        <button id="loadMore" onclick="loadMore()">Load More Results</button>
     </div>
     <script>
+        let currentPage = 1;
+
         async function performSearch(event) {
             event.preventDefault();
-            
+            currentPage = 1; // Reset page number on new search
             const query = document.getElementById('query').value;
+            await fetchResults(query, currentPage);
+        }
+
+        async function fetchResults(query, page) {
             const resultsDiv = document.getElementById('results');
-            
-            if (query) {
-                try {
-                    // Use ngrok URL
-                    const response = await fetch(`https://3de2-2600-1700-b3a0-f20-bc48-756c-49db-e096.ngrok-free.app/search?q=${encodeURIComponent(query)}`);
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch results');
-                    }
-                    const results = await response.json();
-                    
+            try {
+                const response = await fetch(`http://localhost:3000/search?q=${encodeURIComponent(query)}&page=${page}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch results');
+                }
+                const results = await response.json();
+                
+                // Display results
+                if (page === 1) {
                     resultsDiv.innerHTML = results.map(result => `
                         <div class="result">
                             <h2><a href="${result.link}" target="_blank">${result.title}</a></h2>
                             <p class="snippet">${result.snippet}</p>
                         </div>
                     `).join('');
-                } catch (error) {
-                    resultsDiv.innerHTML = `<p>Error fetching search results: ${error.message}</p>`;
+                } else {
+                    resultsDiv.innerHTML += results.map(result => `
+                        <div class="result">
+                            <h2><a href="${result.link}" target="_blank">${result.title}</a></h2>
+                            <p class="snippet">${result.snippet}</p>
+                        </div>
+                    `).join('');
                 }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p>Error fetching search results: ${error.message}</p>`;
             }
+        }
+
+        function loadMore() {
+            const query = document.getElementById('query').value;
+            currentPage++;
+            fetchResults(query, currentPage);
         }
     </script>
 </body>
