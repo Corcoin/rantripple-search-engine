@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Search Engine</title><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Search Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; /* Prevents body from scrolling */
+        }
+        
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            height: 80vh; /* Adjust height to make space for scrolling */
+            overflow-y: auto; /* Allows scrolling within the container */
+        }
+        
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .results {
+            margin-top: 20px;
+            text-align: left;
+            width: 100%;
+        }
+        
+        .result {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .result a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .result a:hover {
+            text-decoration: underline;
+        }
+        
+        .result .snippet {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Search Engine</h1>
+        <form id="searchForm" onsubmit="performSearch(event)">
+            <input type="text" id="query" placeholder="Enter your search" required>
+            <button type="submit">Search</button>
+        </form>
+        <div id="results" class="results"></div>
+    </div>
+    <script>
+        async function performSearch(event) {
+            event.preventDefault();
+            
+            const query = document.getElementById('query').value;
+            const resultsDiv = document.getElementById('results');
+            
+            if (query) {
+                try {
+                    const response = await fetch(`http://localhost:3000/search?q=${encodeURIComponent(query)}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch results');
+                    }
+                    const results = await response.json();
+                    
+                    resultsDiv.innerHTML = results.map(result => `
+                        <div class="result">
+                            <h2><a href="${result.link}" target="_blank">${result.title}</a></h2>
+                            <p class="snippet">${result.snippet}</p>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    resultsDiv.innerHTML = `<p>Error fetching search results: ${error.message}</p>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; /* Prevents body from scrolling */
+        }
+        
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            height: 80vh; /* Adjust height to make space for scrolling */
+            overflow-y: auto; /* Allows scrolling within the container */
+        }
+        
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .results {
+            margin-top: 20px;
+            text-align: left;
+            width: 100%;
+        }
+        
+        .result {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .result a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .result a:hover {
+            text-decoration: underline;
+        }
+        
+        .result .snippet {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Search Engine</h1>
+        <form id="searchForm" onsubmit="performSearch(event)">
+            <input type="text" id="query" placeholder="Enter your search" required>
+            <button type="submit">Search</button>
+        </form>
+        <div id="results" class="results"></div>
+    </div>
+    <script>
+        async function performSearch(event) {
+            event.preventDefault();
+            
+            const query = document.getElementById('query').value;
+            const resultsDiv = document.getElementById('results');
+            
+            if (query) {
+                try {
+                    const response = await fetch(`http://localhost:3000/search?q=${encodeURIComponent(query)}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch results');
+                    }
+                    const results = await response.json();
+                    
+                    resultsDiv.innerHTML = results.map(result => `
+                        <div class="result">
+                            <h2><a href="${result.link}" target="_blank">${result.title}</a></h2>
+                            <p class="snippet">${result.snippet}</p>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    resultsDiv.innerHTML = `<p>Error fetching search results: ${error.message}</p>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
