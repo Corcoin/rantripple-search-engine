@@ -3,262 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Search Engine</title>
+    <title>WebRTC Phone</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #ff007f, #ff7700, #00cfff, #32a852);
-            background-size: 400% 400%;
-            animation: gradientShift 10s ease infinite;
-            margin: 0;
-            padding: 0;
+            text-align: center;
+            padding: 20px;
+        }
+        #phone-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .key {
+            width: 60px;
+            height: 60px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 0%; }
-        }
-
-        .container {
-            text-align: center;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 95%;
-            max-width: 600px;
-            height: 90vh; /* Adjust height to fit within viewport */
-            overflow-y: auto; /* Allows scrolling within the container if needed */
-        }
-
-        header {
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 2.5em;
+            background-color: #007bff;
+            color: white;
+            font-size: 24px;
             font-weight: bold;
-            color: #fff;
-            background: linear-gradient(45deg, #ff007f, #ff7700, #00cfff, #32a852);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            padding: 10px;
-            border-radius: 12px;
-            font-family: 'Comic Sans MS', 'Comic Sans', cursive;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
-            }
-            50% {
-                text-shadow: 6px 6px 12px rgba(0, 0, 0, 0.2);
-            }
-            100% {
-                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
-            }
-        }
-
-        input[type="text"] {
-            width: calc(100% - 22px); /* Adjust width for padding and margin */
-            padding: 14px;
-            border: 1px solid #dadce0;
-            border-radius: 24px;
-            font-size: 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 12px 24px;
-            border: none;
-            background-color: #f8f9fa;
-            color: #1a73e8;
-            border-radius: 24px;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s, color 0.3s;
         }
-
-        button:hover {
-            background-color: #e8f0fe;
-            color: #174ea6;
-        }
-
-        .results {
+        #call-logs {
             margin-top: 20px;
-            text-align: left;
             width: 100%;
+            max-width: 300px;
+            text-align: left;
         }
-
-        .result {
-            margin-bottom: 20px;
+        #call-logs h3 {
+            text-align: center;
+        }
+        .log {
+            border: 1px solid #ddd;
             padding: 10px;
-            border-bottom: 1px solid #dadce0;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            background: #f9f9f9;
         }
-
-        .result a {
-            color: #1a73e8;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .result a:hover {
-            text-decoration: underline;
-        }
-
-        .result .snippet {
-            color: #4d5156;
-            font-size: 14px;
-        }
-
-        .error {
-            color: #d93025;
-        }
-
-        .load-more {
+        #call-buttons {
+            display: flex;
+            gap: 10px;
             margin-top: 20px;
-            padding: 12px 24px;
-            border: none;
-            background-color: #f8f9fa;
-            color: #1a73e8;
-            border-radius: 24px;
-            cursor: pointer;
+        }
+        .call-button {
+            padding: 10px 20px;
             font-size: 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s, color 0.3s;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-
-        .load-more:hover {
-            background-color: #e8f0fe;
-            color: #174ea6;
+        .call-button.call {
+            background-color: green;
         }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2em;
-            }
-
-            input[type="text"] {
-                width: calc(100% - 16px); /* Adjust for smaller screens */
-            }
-
-            button, .load-more {
-                font-size: 14px;
-                padding: 10px 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5em;
-            }
-
-            input[type="text"] {
-                width: calc(100% - 12px); /* Further adjustment */
-            }
-
-            button, .load-more {
-                font-size: 12px;
-                padding: 8px 16px;
-            }
+        .call-button.end {
+            background-color: red;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Rantripple Search </h1>
-        <form id="searchForm" onsubmit="performSearch(event)">
-            <input type="text" id="query" placeholder="Enter your search" required>
-            <button type="submit">Search</button>
-        </form>
-        <div id="results" class="results"></div>
-        <button id="loadMore" class="load-more" onclick="loadMore()">Load More</button>
+    <div id="phone-container">
+        <h1>WebRTC Phone</h1>
+        <div id="keypad">
+            <div class="key">1</div>
+            <div class="key">2</div>
+            <div class="key">3</div>
+            <div class="key">4</div>
+            <div class="key">5</div>
+            <div class="key">6</div>
+            <div class="key">7</div>
+            <div class="key">8</div>
+            <div class="key">9</div>
+            <div class="key">*</div>
+            <div class="key">0</div>
+            <div class="key">#</div>
+        </div>
+        <div id="call-buttons">
+            <button class="call-button call" id="startCall">Call</button>
+            <button class="call-button end" id="endCall">End</button>
+        </div>
+        <div id="call-logs">
+            <h3>Call Logs</h3>
+            <div id="logs"></div>
+        </div>
     </div>
-   <script>
-        let currentPage = 1;
-        const resultsPerPage = 25;
+    <audio id="ringtone" src="w.mp3" loop></audio>
+    <audio id="callTone" src="call-tone.mp3"></audio>
+    <script>
+        const signalingServer = new WebSocket('ws://localhost:8088');
+        const ringtone = document.getElementById('ringtone');
+        const callTone = document.getElementById('callTone');
+        const logsContainer = document.getElementById('logs');
+        let peerConnection;
+        let localStream;
 
-        async function performSearch(event) {
-            event.preventDefault();
-            
-            const query = document.getElementById('query').value;
-            const resultsDiv = document.getElementById('results');
-            currentPage = 1; // Reset to the first page
+        // Helper to log call activity
+        const logCall = (message) => {
+            const logEntry = document.createElement('div');
+            logEntry.classList.add('log');
+            logEntry.innerText = message;
+            logsContainer.prepend(logEntry);
+        };
 
-            if (query) {
-                try {
-                    const response = await fetch(`https://709e-2600-1700-b3a0-f20-bc48-756c-49db-e096.ngrok-free.app/search?q=${encodeURIComponent(query)}&page=${currentPage}&limit=${resultsPerPage}`);
-                    
-                    if (response.status === 404) {
-                        throw new Error('The requested resource was not found.');
-                    }
-                    
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch results');
-                    }
+        signalingServer.onopen = () => {
+            signalingServer.send(JSON.stringify({ type: 'register', id: 'user1' }));
+        };
 
-                    const results = await response.json();
-                    
-                    resultsDiv.innerHTML = results.map(result => `
-                        <div class="result">
-                            <h2><a href="${result.link}" target="_blank">${result.title}</a></h2>
-                            <p class="snippet">${result.snippet}</p>
-                        </div>
-                    `).join('');
-                    document.getElementById('loadMore').style.display = 'block'; // Show the Load More button
-                } catch (error) {
-                    resultsDiv.innerHTML = `<p class="error">Error fetching search results: ${error.message}</p>`;
+        signalingServer.onmessage = async (message) => {
+            const data = JSON.parse(message.data);
+
+            if (data.type === 'offer') {
+                // Play ringtone
+                ringtone.play();
+                const acceptCall = confirm(`Incoming call from ${data.sender}. Accept?`);
+                if (acceptCall) {
+                    ringtone.pause();
+                    ringtone.currentTime = 0;
+                    peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                    localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    localStream.getTracks().forEach((track) => peerConnection.addTrack(track, localStream));
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+                    const answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    signalingServer.send(JSON.stringify({ type: 'answer', recipient: data.sender, sdp: peerConnection.localDescription }));
+                    logCall(`Call accepted from ${data.sender}`);
+                } else {
+                    ringtone.pause();
+                    ringtone.currentTime = 0;
+                    logCall(`Call rejected from ${data.sender}`);
                 }
+            } else if (data.type === 'candidate') {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
             }
-        }
+        };
 
-        async function loadMore() {
-            const query = document.getElementById('query').value;
-            const resultsDiv = document.getElementById('results');
-            currentPage++; // Increment page number
+        const startCall = async () => {
+            const recipient = prompt('Enter recipient ID:');
+            if (!recipient) return;
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-            if (query) {
-                try {
-                    const response = await fetch(`https://709e-2600-1700-b3a0-f20-bc48-756c-49db-e096.ngrok-free.app/search?q=${encodeURIComponent(query)}&page=${currentPage}&limit=${resultsPerPage}`);
-                    
-                    if (response.status === 404) {
-                        throw new Error('The requested resource was not found.');
-                    }
-                    
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch results');
-                    }
+            peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+            localStream.getTracks().forEach((track) => peerConnection.addTrack(track, localStream));
 
-                    const results = await response.json();
-                    
-                    if (results.length === 0) {
-                        document.getElementById('loadMore').style.display = 'none'; // Hide the button if no more results
-                        return;
-                    }
-                    
-                    resultsDiv.innerHTML += results.map(result => `
-                        <div class="result">
-                            <h2><a href="${result.link}" target="_blank">${result.title}</a></h2>
-                            <p class="snippet">${result.snippet}</p>
-                        </div>
-                    `).join('');
-                } catch (error) {
-                    resultsDiv.innerHTML += `<p class="error">Error fetching search results: ${error.message}</p>`;
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    signalingServer.send(JSON.stringify({ type: 'candidate', candidate: event.candidate, recipient }));
                 }
+            };
+
+            callTone.play();
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            signalingServer.send(JSON.stringify({ type: 'offer', recipient, sender: 'user1', sdp: offer }));
+            callTone.pause();
+            callTone.currentTime = 0;
+            logCall(`Outgoing call to ${recipient}`);
+        };
+
+        const endCall = () => {
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
             }
-        }
+            ringtone.pause();
+            ringtone.currentTime = 0;
+            callTone.pause();
+            callTone.currentTime = 0;
+            logCall('Call ended');
+        };
+
+        document.getElementById('startCall').addEventListener('click', startCall);
+        document.getElementById('endCall').addEventListener('click', endCall);
     </script>
 </body>
 </html>
