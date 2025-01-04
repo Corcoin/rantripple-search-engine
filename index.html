@@ -3,187 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebRTC Phone</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        #phone-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 60px);
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .key {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #007bff;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        #call-logs {
-            margin-top: 20px;
-            width: 100%;
-            max-width: 300px;
-            text-align: left;
-        }
-        #call-logs h3 {
-            text-align: center;
-        }
-        .log {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            background: #f9f9f9;
-        }
-        #call-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .call-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .call-button.call {
-            background-color: green;
-        }
-        .call-button.end {
-            background-color: red;
-        }
-    </style>
+    <title>WebRTC Internet Access</title>
 </head>
 <body>
-    <div id="phone-container">
-        <h1>WebRTC Phone</h1>
-        <div id="keypad">
-            <div class="key">1</div>
-            <div class="key">2</div>
-            <div class="key">3</div>
-            <div class="key">4</div>
-            <div class="key">5</div>
-            <div class="key">6</div>
-            <div class="key">7</div>
-            <div class="key">8</div>
-            <div class="key">9</div>
-            <div class="key">*</div>
-            <div class="key">0</div>
-            <div class="key">#</div>
-        </div>
-        <div id="call-buttons">
-            <button class="call-button call" id="startCall">Call</button>
-            <button class="call-button end" id="endCall">End</button>
-        </div>
-        <div id="call-logs">
-            <h3>Call Logs</h3>
-            <div id="logs"></div>
-        </div>
-    </div>
-    <audio id="ringtone" src="w.mp3" loop></audio>
-    <audio id="callTone" src="call-tone.mp3"></audio>
+    <h1>Connect to Internet</h1>
+    <button id="connect">Connect</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/simple-peer/simplepeer.min.js"></script>
     <script>
-        const signalingServer = new WebSocket('ws://localhost:8088');
-        const ringtone = document.getElementById('ringtone');
-        const callTone = document.getElementById('callTone');
-        const logsContainer = document.getElementById('logs');
-        let peerConnection;
-        let localStream;
+        const signalingServer = new WebSocket('ws:// https://183f-2600-1700-b3a0-f20-9e92-1397-8505-72b6.ngrok-free.app');
+        const peer = new SimplePeer({ initiator: true });
 
-        // Helper to log call activity
-        const logCall = (message) => {
-            const logEntry = document.createElement('div');
-            logEntry.classList.add('log');
-            logEntry.innerText = message;
-            logsContainer.prepend(logEntry);
-        };
-
-        signalingServer.onopen = () => {
-            signalingServer.send(JSON.stringify({ type: 'register', id: 'user1' }));
-        };
-
-        signalingServer.onmessage = async (message) => {
+        signalingServer.onmessage = (message) => {
             const data = JSON.parse(message.data);
-
-            if (data.type === 'offer') {
-                // Play ringtone
-                ringtone.play();
-                const acceptCall = confirm(`Incoming call from ${data.sender}. Accept?`);
-                if (acceptCall) {
-                    ringtone.pause();
-                    ringtone.currentTime = 0;
-                    peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-                    localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    localStream.getTracks().forEach((track) => peerConnection.addTrack(track, localStream));
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
-                    const answer = await peerConnection.createAnswer();
-                    await peerConnection.setLocalDescription(answer);
-                    signalingServer.send(JSON.stringify({ type: 'answer', recipient: data.sender, sdp: peerConnection.localDescription }));
-                    logCall(`Call accepted from ${data.sender}`);
-                } else {
-                    ringtone.pause();
-                    ringtone.currentTime = 0;
-                    logCall(`Call rejected from ${data.sender}`);
-                }
-            } else if (data.type === 'candidate') {
-                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-            }
+            peer.signal(data);
         };
 
-        const startCall = async () => {
-            const recipient = prompt('Enter recipient ID:');
-            if (!recipient) return;
-            localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        peer.on('signal', (data) => {
+            signalingServer.send(JSON.stringify(data));
+        });
 
-            peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-            localStream.getTracks().forEach((track) => peerConnection.addTrack(track, localStream));
+        peer.on('connect', () => {
+            alert('Connected via WebRTC! You now have internet access.');
+        });
 
-            peerConnection.onicecandidate = (event) => {
-                if (event.candidate) {
-                    signalingServer.send(JSON.stringify({ type: 'candidate', candidate: event.candidate, recipient }));
-                }
-            };
+        peer.on('data', (data) => {
+            console.log('Received:', data.toString());
+        });
 
-            callTone.play();
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer);
-            signalingServer.send(JSON.stringify({ type: 'offer', recipient, sender: 'user1', sdp: offer }));
-            callTone.pause();
-            callTone.currentTime = 0;
-            logCall(`Outgoing call to ${recipient}`);
-        };
-
-        const endCall = () => {
-            if (peerConnection) {
-                peerConnection.close();
-                peerConnection = null;
-            }
-            ringtone.pause();
-            ringtone.currentTime = 0;
-            callTone.pause();
-            callTone.currentTime = 0;
-            logCall('Call ended');
-        };
-
-        document.getElementById('startCall').addEventListener('click', startCall);
-        document.getElementById('endCall').addEventListener('click', endCall);
+        document.getElementById('connect').addEventListener('click', () => {
+            console.log('Connecting...');
+        });
     </script>
 </body>
 </html>
